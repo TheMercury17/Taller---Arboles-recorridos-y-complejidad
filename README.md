@@ -18,6 +18,9 @@
 1. [Propósito del Taller](#propósito-del-taller)
 2. [Estructura del Repositorio](#estructura-del-repositorio)
 3. [Requisitos y Modo de Uso](#requisitos-y-modo-de-uso)
+   - [Guía Detallada de Instalación y Ejecución en Linux](#guía-detallada-de-instalación-y-ejecución-en-linux-ubuntu--debian--arch--fedora)
+   - [Opción A: Ejecución Automatizada mediante Makefile](#opción-a-ejecución-automatizada-mediante-makefile-recomendado-en-linuxmacos)
+   - [Opción B: Ejecución Directa con python3](#opción-b-ejecución-directa-con-python3-linux-macos-windows)
 4. [Punto 1: Conceptos y Representación de Árboles](#punto-1-conceptos-y-representación-de-árboles)
 5. [Punto 2: Construcción de un Árbol de Expresiones](#punto-2-construcción-de-un-árbol-de-expresiones)
 6. [Punto 3: Recorridos en Profundidad (DFS)](#punto-3-recorridos-en-profundidad-dfs)
@@ -45,6 +48,7 @@ Fortalecer el manejo de árboles como estructura fundamental para representar y 
 ```text
 Taller - Arboles, recorridos y complejidad/
 ├── README.md                           # Documentación conceptual, matemática y técnica completa
+├── Makefile                            # Automatización de pruebas y comandos para Linux/macOS
 ├── requirements.txt                    # Dependencias del proyecto (Python estándar)
 ├── .gitignore                          # Exclusiones de Git
 ├── main.py                             # Ejecutor maestro de pruebas y reportes
@@ -71,29 +75,104 @@ Taller - Arboles, recorridos y complejidad/
 
 ## Requisitos y Modo de Uso
 
-- **Entorno de Ejecución:** Python 3.10 o superior (compatible y probado en Python 3.14).
-- **Librerías externas:** Ninguna requerida; utiliza módulos nativos de la biblioteca estándar de Python (`typing`, `collections`, `unittest`).
+El proyecto está diseñado para ser completamente **multiplataforma (Linux, macOS, Windows)** y no requiere instalar librerías pesadas de terceros, ya que aprovecha exclusivamente los módulos nativos de la biblioteca estándar de Python (`typing`, `collections`, `unittest`).
 
-### Comandos de Ejecución
+- **Versión de Python recomendada:** Python 3.10 o superior (probado en Python 3.10, 3.12 y 3.14).
+- **Herramientas recomendadas en Linux:** `python3`, `python3-venv`, `make`, `git`.
 
-1. **Ejecutar toda la suite del taller (demostración integral):**
+---
+
+### Guía Detallada de Instalación y Ejecución en Linux (Ubuntu / Debian / Arch / Fedora)
+
+#### Paso 1: Instalar dependencias del sistema operativo
+Asegúrate de contar con Python 3 y la utilidad `make`:
+
+```bash
+# En distribuciones basadas en Debian / Ubuntu / Linux Mint:
+sudo apt update
+sudo apt install -y python3 python3-pip python3-venv make git
+
+# En distribuciones basadas en Fedora / RHEL:
+sudo dnf install -y python3 python3-pip make git
+
+# En Arch Linux / Manjaro:
+sudo pacman -S python make git
+```
+
+#### Paso 2: Clonar el repositorio
+Abre una terminal y clona el proyecto en tu máquina local:
+
+```bash
+git clone https://github.com/TheMercury17/Taller---Arboles-recorridos-y-complejidad.git
+cd "Taller---Arboles-recorridos-y-complejidad"
+```
+
+#### Paso 3: (Opcional) Crear y activar un entorno virtual
+Aunque el código usa la biblioteca estándar, se recomienda aislar la ejecución:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+*(Para salir del entorno virtual posteriormente, simplemente escribe `deactivate`).*
+
+---
+
+### Opción A: Ejecución Automatizada mediante `Makefile` (Recomendado en Linux/macOS)
+
+El repositorio incluye un `Makefile` optimizado para facilitar la ejecución de pruebas y módulos sin necesidad de recordar comandos extensos:
+
+| Comando | Descripción |
+|---|---|
+| `make help` | Muestra el menú de ayuda con todos los comandos y su descripción. |
+| `make test` | **Ejecuta la suite completa de 14 pruebas unitarias con reporte verboso.** |
+| `make run` | Ejecuta la demostración interactiva integral del taller (`main.py`). |
+| `make all` | Ejecuta primero las pruebas unitarias y luego todo el taller. |
+| `make punto1` | Ejecuta el análisis conceptual, relaciones y propiedades del Punto 1. |
+| `make punto2` | Construye el árbol de expresiones y ejecuta la evaluación paso a paso. |
+| `make punto3` | Ejecuta los algoritmos DFS y las 3 pruebas de búsqueda requeridas. |
+| `make punto4` | Ejecuta los algoritmos BFS y la búsqueda formateada por niveles. |
+| `make punto5` | Construye el árbol sintáctico descendente y calcula métricas gramaticales. |
+| `make comparacion`| Muestra la tabla comparativa DFS vs BFS y la conclusión final. |
+| `make clean` | Elimina archivos `.pyc` y directorios temporales `__pycache__`. |
+
+#### Ejemplos de uso con `make`:
+```bash
+# Ejecutar las pruebas unitarias:
+make test
+
+# Ejecutar el taller completo:
+make run
+
+# Ejecutar únicamente las pruebas del Punto 3 (DFS):
+make punto3
+```
+
+---
+
+### Opción B: Ejecución Directa con `python3` (Linux, macOS, Windows)
+
+Si prefieres invocar directamente al intérprete de Python sin usar `make`:
+
+1. **Ejecutar la suite de pruebas unitarias (`unittest`):**
    ```bash
-   python main.py
+   python3 -m unittest discover tests -v
+   ```
+   *(En Windows PowerShell o CMD, usa `python -m unittest discover tests -v`).*
+
+2. **Ejecutar el taller completo con todos los reportes:**
+   ```bash
+   python3 main.py
    ```
 
-2. **Ejecutar un punto específico:**
+3. **Ejecutar un punto específico:**
    ```bash
-   python main.py punto1
-   python main.py punto2
-   python main.py punto3
-   python main.py punto4
-   python main.py punto5
-   python main.py comparacion
-   ```
-
-3. **Ejecutar las pruebas unitarias automatizadas:**
-   ```bash
-   python -m unittest discover tests -v
+   python3 main.py punto1
+   python3 main.py punto2
+   python3 main.py punto3
+   python3 main.py punto4
+   python3 main.py punto5
+   python3 main.py comparacion
    ```
 
 ---
