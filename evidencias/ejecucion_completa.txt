@@ -1,0 +1,381 @@
+================================================================================
+ UNIVERSIDAD SERGIO ARBOLEDA - CIENCIAS DE LA COMPUTACIÓN E INTELIGENCIA ARTIFICIAL
+ LENGUAJES DE PROGRAMACIÓN Y TRADUCCIÓN
+ TALLER: ÁRBOLES, RECORRIDOS Y COMPLEJIDAD COMPUTACIONAL
+ GRUPO 5: Andrés Sebastián Coral Vallejo & Carol Arenas Cardona
+================================================================================
+
+======================================================================
+PUNTO 1: CONCEPTOS Y REPRESENTACIÓN DE ÁRBOLES
+======================================================================
+
+1. Representación visual del árbol:
+└── A
+    ├── B
+    │   ├── E
+    │   └── F
+    │       └── J
+    ├── C
+    │   └── G
+    └── D
+        ├── H
+        │   ├── K
+        │   └── L
+        └── I
+
+2. Identificación de elementos fundamentales:
+   • Raíz: A
+   • Hojas: E, G, I, J, K, L
+   • Nodos internos: A, B, C, D, F, H
+   • Padre del nodo J: F
+   • Ancestros del nodo L (hacia la raíz): H -> D -> A
+   • Descendientes del nodo B: E, F, J
+   • Hermanos del nodo H: I
+
+3. Grados, profundidades y altura:
+   • Grados por nodo: {'A': 3, 'B': 2, 'C': 1, 'D': 2, 'E': 0, 'F': 1, 'G': 0, 'H': 2, 'I': 0, 'J': 0, 'K': 0, 'L': 0}
+   • Grado total del árbol: 3 (determinado por el nodo A con 3 hijos)
+   • Profundidades (en aristas / nivel base 0):
+       - Nodo A: 0
+       - Nodo F: 2
+       - Nodo J: 3
+       - Nodo L: 3
+   • Altura total del árbol: 3 aristas (4 niveles de nodos)
+
+4. Clasificación estructural y justificaciones:
+   • ¿Es binario?: NO
+     Justificación: Para ser binario, cada nodo debe poseer a lo sumo 2 hijos (grado <= 2).
+     El nodo raíz A tiene grado 3 (hijos B, C, D), por lo que es un árbol general (3-ario).
+   • ¿Es completo?: NO
+     Justificación: Un árbol completo exige que todos los niveles estén llenos al máximo,
+     excepto eventualmente el último, el cual debe llenarse estrictamente de izquierda a derecha.
+     En este árbol, nodos del nivel 2 como E y G no poseen hijos mientras que F y H sí tienen,
+     dejando 'huecos' en la distribución horizontal de la descendencia.
+   • ¿Es balanceado?: SÍ (en altura)
+     Justificación: Bajo la definición formal de balance en altura (tipo AVL), para todo nodo
+     la diferencia de alturas entre cualquiera de sus subárboles es <= 1.
+     - En la raíz A: subárbol B (altura 2), subárbol C (altura 1), subárbol D (altura 2) -> max diff = 1.
+     - En el nodo B: subárbol E (altura 0), subárbol F (altura 1) -> diff = 1.
+     - En el nodo D: subárbol H (altura 1), subárbol I (altura 0) -> diff = 1.
+     Por tanto, el árbol está balanceado en altura, aunque no sea completo ni simétrico.
+
+5. Análisis de Complejidad Temporal:
+   Para contar hojas, calcular altura y buscar un valor no existente, el algoritmo debe visitar
+   exhaustivamente cada uno de los N nodos y examinar las (N - 1) aristas.
+   Complejidad temporal: O(N) (tiempo lineal en el número de nodos).
+======================================================================
+
+
+======================================================================
+PUNTO 2: CONSTRUCCIÓN Y EVALUACIÓN DE UN ÁRBOL DE EXPRESIONES
+======================================================================
+Expresión algebraica: (a + 3) * (b - 2) + c / 4
+
+1. Operandos y Operadores identificados:
+   • Operandos: Variables [a, b, c] y Constantes numéricas [3, 2, 4]
+   • Operadores: Suma (+), Multiplicación (*), Resta (-), División (/)
+   • Símbolos de agrupación: Paréntesis (...) que alteran la precedencia natural
+
+2. Estructura visual del Árbol de Expresión:
+└── +
+    ├── *
+    │   ├── +
+    │   │   ├── a
+    │   │   └── 3
+    │   └── -
+    │       ├── b
+    │       └── 2
+    └── /
+        ├── c
+        └── 4
+
+3. Recorridos del Árbol:
+   • Preorden (Prefija / Notación Polaca):     + * + a 3 - b 2 / c 4
+   • Inorden  (Infija parentizada):           (((a + 3) * (b - 2)) + (c / 4))
+   • Postorden (Postfija / Polaca Inversa):   a 3 + b 2 - * c 4 / +
+
+4. Correspondencia con Notaciones Formales:
+   • Preorden  -> Notación Prefija (símbolo operador precede a sus operandos)
+   • Inorden   -> Notación Infija (operador entre sus dos operandos)
+   • Postorden -> Notación Postfija (operador sucede inmediatamente a sus operandos)
+
+5. Evaluación paso a paso con a = 5.0, b = 8.0, c = 12.0:
+   Paso 1: Evaluando: 5.0 + 3.0 = 8.0
+   Paso 2: Evaluando: 8.0 - 2.0 = 6.0
+   Paso 3: Evaluando: 8.0 * 6.0 = 48.0
+   Paso 4: Evaluando: 12.0 / 4.0 = 3.0
+   Paso 5: Evaluando: 48.0 + 3.0 = 51.0
+
+   -> RESULTADO FINAL DE LA EVALUACIÓN: 51.0
+
+6. Respuestas a las Preguntas de Análisis:
+   • P1: ¿Por qué la evaluación de una expresión se realiza en postorden?
+     R: Porque en cualquier operación binaria es imprescindible disponer primero del
+        valor resuelto de ambos operandos (subárboles izquierdo y derecho) antes de poder
+        aplicar el operador. El recorrido postorden (Izquierda, Derecha, Raíz) materializa
+        exactamente el paradigma bottom-up (de abajo hacia arriba) y coincide de forma
+        isomorfa con el funcionamiento de las máquinas basadas en pila (Stack Machines / RPN).
+   • P2: ¿Cuál es la complejidad temporal de evaluar el árbol?
+     R: O(N), donde N es el número total de nodos (en este caso N = 11). Cada nodo se visita
+        un número constante de veces y cada cálculo aritmético primario se ejecuta en O(1).
+   • P3: ¿Cuál es la complejidad espacial del recorrido recursivo en función de h?
+     R: O(h), donde h es la altura del árbol. La memoria requerida proviene de la pila de
+        ejecución (call stack) del lenguaje, almacenando a lo sumo h marcos activos simultáneamente.
+   • P4: ¿Qué ocurre con el consumo de memoria si el árbol está completamente desbalanceado?
+     R: Si el árbol degenera en una estructura lineal tipo lista enlazada (peor caso), la
+        altura pasa a ser h = N. En consecuencia, el consumo de memoria espacial en la pila
+        se degrada de O(log N) a O(N), consumiendo drásticamente más memoria e induciendo el
+        riesgo inminente de un desbordamiento de pila (Stack Overflow / RecursionError).
+======================================================================
+
+
+======================================================================
+PUNTO 3: RECORRIDOS EN PROFUNDIDAD (DFS)
+======================================================================
+Recorrido DFS Preorden Global:
+  • DFS Recursivo: A -> B -> E -> F -> J -> C -> G -> D -> H -> K -> L -> I
+  • DFS Iterativo: A -> B -> E -> F -> J -> C -> G -> D -> H -> K -> L -> I
+  • Número total de hojas: 6 (Hojas: E, J, G, K, L, I)
+  • Altura del árbol (aristas): 3 (Niveles: 4)
+
+EJECUCIÓN DE PRUEBAS DE BÚSQUEDA EXIGIDAS:
+----------------------------------------------------------------------
+Caso de prueba: Valor Cercano a la raíz ('B')
+   • Valor buscado:               B
+   • ¿Encontrado?:                SÍ
+   • Orden de visita:             A -> B
+   • Cantidad de nodos visitados: 2
+   • Número de hojas del árbol:   6
+   • Altura del árbol:            3
+----------------------------------------------------------------------
+Caso de prueba: Valor Último nivel ('L')
+   • Valor buscado:               L
+   • ¿Encontrado?:                SÍ
+   • Orden de visita:             A -> B -> E -> F -> J -> C -> G -> D -> H -> K -> L
+   • Cantidad de nodos visitados: 11
+   • Número de hojas del árbol:   6
+   • Altura del árbol:            3
+----------------------------------------------------------------------
+Caso de prueba: Valor Inexistente ('Z')
+   • Valor buscado:               Z
+   • ¿Encontrado?:                NO
+   • Orden de visita:             A -> B -> E -> F -> J -> C -> G -> D -> H -> K -> L -> I
+   • Cantidad de nodos visitados: 12
+   • Número de hojas del árbol:   6
+   • Altura del árbol:            3
+----------------------------------------------------------------------
+
+TABLA DE COMPLEJIDAD PARA OPERACIONES CON DFS:
++--------------------------+---------------+---------------+---------------+
+| Operación con DFS        | Mejor caso     | Peor caso      | Espacio       |
++--------------------------+---------------+---------------+---------------+
+| Recorrer todo el árbol   | O(N)           | O(N)           | O(h)          |
+| Buscar un valor          | O(1) [en raíz] | O(N) [no está] | O(h)          |
+| Contar hojas             | O(N)           | O(N)           | O(h)          |
+| Calcular la altura       | O(N)           | O(N)           | O(h)          |
++--------------------------+---------------+---------------+---------------+
+
+ANÁLISIS DE CONSUMO DE MEMORIA:
+1. Diferencia entre DFS Recursivo y DFS Iterativo:
+   • DFS Recursivo utiliza la pila de llamadas del sistema (Call Stack). Cada llamada
+     apila un stack frame con variables locales, dirección de retorno y punteros de entorno,
+     lo que conlleva mayor sobrecarga por marco y riesgo de RecursionError.
+   • DFS Iterativo gestiona una pila explícita en memoria heap (objeto List en Python).
+     Solo almacena referencias a los nodos, siendo más eficiente en uso de memoria y libre
+     del límite estricto de recursión del intérprete.
+2. Árbol Balanceado vs. Árbol Completamente Desbalanceado:
+   • En un árbol balanceado de N nodos, la altura h = O(log N). El espacio en pila en
+     cualquier momento es O(log N), muy eficiente.
+   • En un árbol completamente desbalanceado (degenerado en lista), la altura h = N. El
+     consumo de memoria espacial escala a O(N), agotando rápidamente los recursos de pila.
+======================================================================
+
+
+======================================================================
+PUNTO 4: RECORRIDO EN ANCHURA (BFS)
+======================================================================
+1. Nodos agrupados por nivel (Estructura jerárquica):
+Nivel 0: A
+Nivel 1: B, C, D
+Nivel 2: E, F, G, H, I
+Nivel 3: J, K, L
+
+Orden global de visita BFS: A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> K -> L
+
+----------------------------------------------------------------------
+EJECUCIÓN DE PRUEBAS DE BÚSQUEDA BFS:
+----------------------------------------------------------------------
+Prueba: Valor cercano a la raíz ('B')
+Valor buscado:   B
+Resultado:       encontrado
+Nivel del valor: 1
+Nodos visitados: 2 (A -> B)
+----------------------------------------------------------------------
+Prueba: Valor del último nivel ('L')
+Valor buscado:   L
+Resultado:       encontrado
+Nivel del valor: 3
+Nodos visitados: 12 (A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> K -> L)
+----------------------------------------------------------------------
+Prueba: Valor inexistente ('Z')
+Valor buscado:   Z
+Resultado:       no encontrado
+Nivel del valor: N/A
+Nodos visitados: 12 (A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> K -> L)
+----------------------------------------------------------------------
+
+RESPUESTAS A LAS PREGUNTAS DE ANÁLISIS DE BFS:
+1. ¿Por qué BFS requiere una cola?
+   R: Porque una cola sigue la disciplina FIFO (First In, First Out). Esto garantiza que
+      todos los nodos pertenecientes al nivel actual (k) se extraigan y procesen antes
+      que cualquiera de sus hijos correspondientes al nivel siguiente (k + 1).
+
+2. ¿Qué sucedería si se utilizara una pila?
+   R: Una pila opera bajo la disciplina LIFO (Last In, First Out). Al apilar los hijos,
+      el algoritmo pasaría a explorar inmediatamente el último hijo ingresado hacia el
+      fondo del árbol, transformándose automáticamente en un recorrido en profundidad (DFS).
+
+3. ¿Cuál es la complejidad temporal de BFS?
+   R: O(N), donde N es el número total de nodos. Cada nodo entra y sale de la cola
+      exactamente una vez, y cada arista se recorre una sola vez para encolar a los hijos.
+
+4. ¿Cuál es su complejidad espacial?
+   R: O(W), donde W es el ancho máximo del árbol (el nivel con mayor cantidad de nodos).
+      En el peor caso (por ejemplo, un árbol estrella donde la raíz tiene N-1 hijos), la cola
+      almacena hasta O(N) nodos simultáneamente.
+
+5. ¿Cuál recorrido puede consumir más memoria en un árbol ancho: DFS o BFS?
+   R: En un árbol muy ancho, BFS consume significativamente más memoria que DFS. BFS debe
+      mantener todos los nodos del nivel más ancho en la cola (O(W) cercano a O(N)), mientras
+      que DFS únicamente necesita almacenar el camino de la rama activa en su pila (O(h)),
+      la cual es muy reducida en árboles anchos y poco profundos.
+
+6. Si se busca el nodo menos profundo que cumpla una condición, ¿cuál resulta más apropiado?
+   R: BFS es indudablemente el más apropiado. Dado que BFS expande los nodos en orden estricto
+      de niveles crecientes de profundidad (d = 0, 1, 2, ...), el primer nodo encontrado que
+      satisfaga la condición tiene garantizada la distancia mínima a la raíz (menor profundidad).
+      DFS, en cambio, podría descender por una rama muy profunda e irrelevante antes de notar
+      un nodo objetivo que estaba justo al lado de la raíz.
+======================================================================
+
+
+======================================================================
+PUNTO 5: APLICACIÓN AL ANÁLISIS SINTÁCTICO DESCENDENTE
+======================================================================
+Cadena de entrada analizada: id + id * id
+Gramática formal LL(1):
+   E  -> T E'
+   E' -> + T E' | ε
+   T  -> F T'
+   T' -> * F T' | ε
+   F  -> ( E ) | id
+
+1 y 2. Orden de creación de los nodos por el analizador descendente:
+   [01] Símbolo: E   | Acción: Llamada a parse_E() -> Aplica E -> T E'
+   [02] Símbolo: T   | Acción: Llamada a parse_T() -> Aplica T -> F T'
+   [03] Símbolo: F   | Acción: Llamada a parse_F() -> Aplica F -> id
+   [04] Símbolo: id  | Acción: Match terminal 'id' (primer operando)
+   [05] Símbolo: T'  | Acción: Llamada a parse_T'() -> Siguiente token es '+', aplica T' -> ε
+   [06] Símbolo: ε   | Acción: Expansión producción vacía ε
+   [07] Símbolo: E'  | Acción: Llamada a parse_E'() -> Siguiente token es '+', aplica E' -> + T E'
+   [08] Símbolo: +   | Acción: Match terminal '+'
+   [09] Símbolo: T   | Acción: Llamada a parse_T() -> Aplica T -> F T'
+   [10] Símbolo: F   | Acción: Llamada a parse_F() -> Aplica F -> id
+   [11] Símbolo: id  | Acción: Match terminal 'id' (segundo operando)
+   [12] Símbolo: T'  | Acción: Llamada a parse_T'() -> Siguiente token es '*', aplica T' -> * F T'
+   [13] Símbolo: *   | Acción: Match terminal '*'
+   [14] Símbolo: F   | Acción: Llamada a parse_F() -> Aplica F -> id
+   [15] Símbolo: id  | Acción: Match terminal 'id' (tercer operando)
+   [16] Símbolo: T'  | Acción: Llamada a parse_T'() -> Fin de cadena $, aplica T' -> ε
+   [17] Símbolo: ε   | Acción: Expansión producción vacía ε
+   [18] Símbolo: E'  | Acción: Llamada a parse_E'() -> Fin de cadena $, aplica E' -> ε
+   [19] Símbolo: ε   | Acción: Expansión producción vacía ε
+
+Diagrama del Árbol Sintáctico (con etiquetas de orden de creación [#n]):
+└── E [#1]
+    ├── T [#2]
+    │   ├── F [#3]
+    │   │   └── id [#4]
+    │   └── T' [#5]
+    │       └── ε [#6]
+    └── E' [#7]
+        ├── + [#8]
+        ├── T [#9]
+        │   ├── F [#10]
+        │   │   └── id [#11]
+        │   └── T' [#12]
+        │       ├── * [#13]
+        │       ├── F [#14]
+        │       │   └── id [#15]
+        │       └── T' [#16]
+        │           └── ε [#17]
+        └── E' [#18]
+            └── ε [#19]
+
+3. Recorridos ejecutados sobre el árbol sintáctico:
+   • DFS Preorden:  E(#1) -> T(#2) -> F(#3) -> id(#4) -> T'(#5) -> ε(#6) -> E'(#7) -> +(#8) -> T(#9) -> F(#10) -> id(#11) -> T'(#12) -> *(#13) -> F(#14) -> id(#15) -> T'(#16) -> ε(#17) -> E'(#18) -> ε(#19)
+   • DFS Postorden: id(#4) -> F(#3) -> ε(#6) -> T'(#5) -> T(#2) -> +(#8) -> id(#11) -> F(#10) -> *(#13) -> id(#15) -> F(#14) -> ε(#17) -> T'(#16) -> T'(#12) -> T(#9) -> ε(#19) -> E'(#18) -> E'(#7) -> E(#1)
+   • BFS (Niveles): E(#1) -> T(#2) -> E'(#7) -> F(#3) -> T'(#5) -> +(#8) -> T(#9) -> E'(#18) -> id(#4) -> ε(#6) -> F(#10) -> T'(#12) -> ε(#19) -> id(#11) -> *(#13) -> F(#14) -> T'(#16) -> id(#15) -> ε(#17)
+
+4. Información proporcionada por cada recorrido en compilación:
+   • DFS Preorden:
+     Refleja el orden exacto de activación y derivación top-down del analizador
+     sintáctico. Corresponde al flujo de llamadas recursivas de cada procedimiento.
+   • DFS Postorden:
+     Modela la síntesis de atributos y la evaluación semántica (bottom-up). Es la fase
+     donde se sintetizan tipos, se generan cuádruplos/código intermedio y se verifica
+     la consistencia semántica una vez resueltos todos los hijos.
+   • BFS (Anchura):
+     Estratifica la estructura gramatical por niveles de derivación o distancia jerárquica
+     respecto al axioma inicial E. Es útil para visualizaciones e inspecciones por capas.
+
+5. Comparación entre el orden de creación y el recorrido en Preorden:
+   -> ¡Coincidencia Exacta (Isomorfismo Total)! <-
+   En un analizador descendente recursivo (LL), cada subrutina crea primero el nodo padre
+   asociado al no terminal antes de llamar a las subrutinas de sus símbolos del lado derecho.
+   Por definición, visitar la raíz antes de descender recursivamente a los subárboles de
+   izquierda a derecha es exactamente la definición de un recorrido en PREORDEN.
+
+6. Representación de la Precedencia del operador '*' sobre '+':
+   En el árbol sintáctico, la subexpresión 'id * id' se encuentra alojada en el subárbol T',
+   el cual es descendiente de T, ubicado a mayor profundidad (nivel 4-5) que el operador '+'
+   ubicado en E' (nivel 2).
+   Dado que la reducción y síntesis semántica se efectúa de abajo hacia arriba (bottom-up),
+   el operador '*' debe ser evaluado obligatoriamente antes de que su resultado pueda sumarse
+   a través del '+'. La mayor profundidad en la gramática equivale a mayor precedencia.
+
+7. Métricas y Conteo del Árbol Sintáctico (Algoritmo propuesto):
+   • Nodos terminales (id, +, *):         5
+   • Producciones vacías (ε):             3
+   • Nodos no terminales (E, E', T, T', F): 11
+   • Total absoluto de nodos:             19
+   • Altura del árbol sintáctico:         5 aristas (6 niveles)
+======================================================================
+
+
+==========================================================================================
+COMPARACIÓN FINAL: RECORRIDOS DFS vs BFS
+==========================================================================================
+Criterio                               | DFS (Depth-First Search)                      | BFS (Breadth-First Search)                   
+---------------------------------------------------------------------------------------------------------------------------------------
+Estructura auxiliar                    | Pila (Stack): implícita (call stack) o explícita (LIFO) | Cola (Queue): explícita (FIFO)               
+Orden de exploración                   | En profundidad: desciende por cada rama hasta las hojas | En anchura: expande horizontalmente nivel por nivel
+Complejidad temporal                   | O(N): visita cada nodo y arista una cantidad constante de veces | O(N): cada nodo entra y sale de la cola exactamente una vez
+Complejidad espacial                   | O(h): proporcional a la altura h del árbol (camino activo) | O(W): proporcional al ancho máximo W (nivel más poblado)
+Conveniente para evaluar expresiones   | Sí: el recorrido postorden resuelve operandos antes del operador (bottom-up) | No: mezcla operadores y operandos de diferentes niveles jerárquicos
+Conveniente para recorrer por niveles  | No: requiere almacenar o calcular niveles artificialmente | Sí: diseñado naturalmente para procesar estratos o capas del árbol
+Comportamiento en árboles profundos    | Desfavorable: alta memoria en pila (O(h) -> O(N)); riesgo de desbordamiento | Favorable: bajo consumo de memoria si el árbol es estrecho (W pequeño)
+Comportamiento en árboles anchos       | Favorable: bajo consumo de memoria de pila (la altura h es muy reducida) | Desfavorable: alto consumo en cola al acumular niveles muy densos (O(W) -> O(N))
+==========================================================================================
+
+CONCLUSIÓN FINAL (166 palabras - Requisito: 150 a 200 palabras):
+¿Por qué los árboles y sus recorridos son fundamentales para implementar un analizador sintáctico descendente?
+------------------------------------------------------------------------------------------
+Los árboles y sus recorridos constituyen el núcleo estructural y computacional del análisis sintáctico descendente en compiladores modernos. Durante esta etapa, el analizador procesa una secuencia lineal de componentes léxicos (tokens) y la transforma en una representación jerárquica no lineal: el árbol sintáctico. Esta estructura refleja con precisión la gramática formal, resolviendo ambigüedades, asociatividades y precedencias operacionales. En este contexto, el recorrido en profundidad (DFS) en preorden guía la expansión algorítmica y el flujo de llamadas recursivas de las producciones gramaticales desde el axioma inicial hacia los terminales. De forma complementaria, el recorrido en postorden viabiliza la fase de traducción dirigida por sintaxis y evaluación semántica, permitiendo sintetizar tipos, verificar reglas semánticas y generar código intermedio únicamente cuando los subárboles de los operandos han sido totalmente computados (enfoque bottom-up). En conclusión, los árboles proporcionan la topología formal indispensable para capturar el significado del código fuente, mientras que los recorridos definen el orden canónico y riguroso en que se construyen, validan y traducen las instrucciones del programa.
+------------------------------------------------------------------------------------------
+Total de palabras comprobadas: 166 palabras (Cumple estrictamente el rango [150, 200]).
+==========================================================================================
+
+================================================================================
+ EJECUCIÓN DEL TALLER COMPLETADA EXITOSAMENTE
+================================================================================
