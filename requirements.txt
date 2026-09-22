@@ -1,0 +1,3 @@
+# Dependencias del proyecto
+# Este proyecto está desarrollado con librerías nativas de la biblioteca estándar de Python (typing, collections, unittest).
+# No se requieren dependencias externas obligatorias para su ejecución.
