@@ -471,11 +471,17 @@ graph TD
 
 ### 3. Recorridos Ejecutados sobre el Árbol Sintáctico
 - **DFS Preorden:**
-  $$E(\#1) \to T(\#2) \to F(\#3) \to \text{id}(\#4) \to T'(\#5) \to \varepsilon(\#6) \to E'(\#7) \to +(\#8) \to T(\#9) \to F(\#10) \to \text{id}(\#11) \to T'(\#12) \to *(\#13) \to F(\#14) \to \text{id}(\#15) \to T'(\#16) \to \varepsilon(\#17) \to E'(\#18) \to \varepsilon(\#19)$$
+  ```text
+  E(#1) -> T(#2) -> F(#3) -> id(#4) -> T'(#5) -> ε(#6) -> E'(#7) -> +(#8) -> T(#9) -> F(#10) -> id(#11) -> T'(#12) -> *(#13) -> F(#14) -> id(#15) -> T'(#16) -> ε(#17) -> E'(#18) -> ε(#19)
+  ```
 - **DFS Postorden:**
-  $$\text{id}(\#4) \to F(\#3) \to \varepsilon(\#6) \to T'(\#5) \to T(\#2) \to +(\#8) \to \text{id}(\#11) \to F(\#10) \to *(\#13) \to \text{id}(\#15) \to F(\#14) \to \varepsilon(\#17) \to T'(\#16) \to T'(\#12) \to T(\#9) \to \varepsilon(\#19) \to E'(\#18) \to E'(\#7) \to E(\#1)$$
+  ```text
+  id(#4) -> F(#3) -> ε(#6) -> T'(#5) -> T(#2) -> +(#8) -> id(#11) -> F(#10) -> *(#13) -> id(#15) -> F(#14) -> ε(#17) -> T'(#16) -> T'(#12) -> T(#9) -> ε(#19) -> E'(#18) -> E'(#7) -> E(#1)
+  ```
 - **BFS (Niveles):**
-  $$E(\#1) \to T(\#2) \to E'(\#7) \to F(\#3) \to T'(\#5) \to +(\#8) \to T(\#9) \to E'(\#18) \to \text{id}(\#4) \to \varepsilon(\#6) \to F(\#10) \to T'(\#12) \to \varepsilon(\#19) \to \text{id}(\#11) \to *(\#13) \to F(\#14) \to T'(\#16) \to \text{id}(\#15) \to \varepsilon(\#17)$$
+  ```text
+  E(#1) -> T(#2) -> E'(#7) -> F(#3) -> T'(#5) -> +(#8) -> T(#9) -> E'(#18) -> id(#4) -> ε(#6) -> F(#10) -> T'(#12) -> ε(#19) -> id(#11) -> *(#13) -> F(#14) -> T'(#16) -> id(#15) -> ε(#17)
+  ```
 
 ### 4. Información Proporcionada por Cada Recorrido en Compiladores
 - **DFS en Preorden:** Modela la **secuencia de activación y derivación hacia adelante** del compilador. Muestra exactamente el orden en que el analizador descendente consume tokens y decide qué producciones de la gramática debe expandir.
