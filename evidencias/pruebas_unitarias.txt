@@ -1,0 +1,19 @@
+test_conteo_palabras_conclusion (test_taller.TestComparacionConclusion.test_conteo_palabras_conclusion) ... ok
+test_tabla_comparativa_criterios (test_taller.TestComparacionConclusion.test_tabla_comparativa_criterios) ... ok
+test_clasificaciones (test_taller.TestPunto1.test_clasificaciones) ... ok
+test_grados_profundidades_altura (test_taller.TestPunto1.test_grados_profundidades_altura) ... ok
+test_identificacion_elementos (test_taller.TestPunto1.test_identificacion_elementos) ... ok
+test_evaluacion_numerica (test_taller.TestPunto2.test_evaluacion_numerica) ... ok
+test_recorridos (test_taller.TestPunto2.test_recorridos) ... ok
+test_dfs_busqueda (test_taller.TestPunto3.test_dfs_busqueda) ... ok
+test_dfs_hojas_y_altura (test_taller.TestPunto3.test_dfs_hojas_y_altura) ... ok
+test_dfs_recursivo_vs_iterativo (test_taller.TestPunto3.test_dfs_recursivo_vs_iterativo) ... ok
+test_bfs_busqueda (test_taller.TestPunto4.test_bfs_busqueda) ... ok
+test_bfs_orden_y_niveles (test_taller.TestPunto4.test_bfs_orden_y_niveles) ... ok
+test_correspondencia_creacion_preorden (test_taller.TestPunto5.test_correspondencia_creacion_preorden) ... ok
+test_metricas_arbol_sintactico (test_taller.TestPunto5.test_metricas_arbol_sintactico) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.001s
+
+OK
